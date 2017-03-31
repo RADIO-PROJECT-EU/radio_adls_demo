@@ -34,7 +34,6 @@ def init():
     sleep(5)
 
     ost_pub.publish(2)
-    print 'sent'
 
 
 if __name__ == '__main__':
