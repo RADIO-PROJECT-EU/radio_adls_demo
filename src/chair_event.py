@@ -1,13 +1,13 @@
 #!/usr/bin/env python
+import cv2
 import rospy
 import getpass
-import cv2
 from time import sleep
 import subprocess, shlex
 from datetime import datetime
-from ros_visual_msgs.msg import FusionMsg
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
+from ros_visual_msgs.msg import FusionMsg
 from cv_bridge import CvBridge, CvBridgeError
 
 sitting = False
@@ -28,6 +28,10 @@ def eventCallback(msg):
         dt = datetime.now()
         end_time = dt.minute*60000000 + dt.second*1000000 + dt.microsecond
         print '\033[94m Sit to stand duration: ' + str((end_time-start_time)/1000000.0) + ' seconds.\033[0m'
+        #timestamp = datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")
+        command = "curl -silent -i -XPOST 'http://localhost:8086/write?db=radiodb' --data-binary 'adl_table,event_type='Sitting-Standing' duration="+str((end_time-start_time)/1000000.0)+"'"
+        command = shlex.split(command)
+        subprocess.Popen(command, stdout=subprocess.PIPE)
 
 def rectangleCallback(msg):
     global new_rec, boxes
@@ -38,7 +42,7 @@ def rectangleCallback(msg):
             boxes.append(i)
 
 def imageCallback(image):
-    global new_rec, boxes
+    global new_rec, boxes, bridge
     try:
         cv_image = bridge.imgmsg_to_cv2(image, "bgr8")
     except CvBridgeError as e:
@@ -62,7 +66,7 @@ def init():
 
     command = "rosbag play -q /home/"+getpass.getuser()+"/ss1_lsA_sc1B_ru15_cg_v.bag"
     command = shlex.split(command)
-    subprocess.Popen(command)
+    subprocess.Popen(command, stdout=subprocess.PIPE)
 
     dt = datetime.now()
     start_time = dt.minute*60000000 + dt.second*1000000 + dt.microsecond

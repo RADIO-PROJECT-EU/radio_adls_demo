@@ -16,6 +16,10 @@ def eventCallback(msg):
         dt = datetime.now()
         first_time = False
         print "\033[92m Pill intake date and time: " + datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")+"\033[0m"
+        #timestamp = datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")
+        command = "curl -silent -i -XPOST 'http://localhost:8086/write?db=radiodb' --data-binary 'adl_table,event_type='Pill_intake' duration="+str(1)+"'"
+        command = shlex.split(command)
+        subprocess.Popen(command, stdout=subprocess.PIPE)
 
 def init():
     global start_time, ost_pub
@@ -23,13 +27,13 @@ def init():
 
     command = "rosbag play -s 30 -u 20 -q /home/"+getpass.getuser()+"/ss1_lsN_sc4_ru11_cg05_v.bag"
     command = shlex.split(command)
-    subprocess.Popen(command)
+    subprocess.Popen(command, stdout=subprocess.PIPE)
 
     sleep(1)
 
     command = "roslaunch motion_analysis object_event_detection.launch"
     command = shlex.split(command)
-    subprocess.Popen(command)
+    subprocess.Popen(command, stdout=subprocess.PIPE)
 
     sleep(5)
 
