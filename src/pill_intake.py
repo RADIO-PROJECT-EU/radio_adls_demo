@@ -5,46 +5,37 @@ from time import sleep
 import subprocess, shlex
 from datetime import datetime
 from std_msgs.msg import Int32
+from sensor_msgs.msg import Image
 from motion_analysis_msgs.msg import AnswerWithHeader
 
-first_time = True
+sub = None
 ost_pub = None
+image_sub = None
+
+
+def imageCallback(msg):
+    global image_sub, ost_pub
+    sleep(5)
+    ost_pub.publish(2)
+    image_sub.unregister()
 
 def eventCallback(msg):
-    global first_time
-    if first_time:
-        dt = datetime.now()
-        first_time = False
-        print "\033[92m Pill intake date and time: " + datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")+"\033[0m"
-        #timestamp = datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")
-        command = "curl -silent -i -XPOST 'http://localhost:8086/write?db=radiodb' --data-binary 'adl_table,event_type='Pill_intake' duration="+str(1)+"'"
-        command = shlex.split(command)
-        subprocess.Popen(command, stdout=subprocess.PIPE)
-
-def init():
-    global start_time, ost_pub
-    sleep(5)
-
-    command = "rosbag play -s 30 -u 20 -q /home/"+getpass.getuser()+"/ss1_lsN_sc4_ru11_cg05_v.bag"
+    global sub
+    dt = datetime.now()
+    first_time = False
+    print "\033[92m Pill intake date and time: " + datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")+"\033[0m"
+    #timestamp = datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")
+    command = "curl -silent -i -XPOST 'http://localhost:8086/write?db=radiodb' --data-binary 'adl_table,event_type='Pill_intake' duration="+str(1)+"'"
     command = shlex.split(command)
     subprocess.Popen(command, stdout=subprocess.PIPE)
-
-    sleep(1)
-
-    command = "roslaunch motion_analysis object_event_detection.launch"
-    command = shlex.split(command)
-    subprocess.Popen(command, stdout=subprocess.PIPE)
-
-    sleep(5)
-
-    ost_pub.publish(2)
+    sub.unregister()
 
 
 if __name__ == '__main__':
     rospy.init_node('radio_pill_demo')
-    rospy.Subscriber('/motion_analysis/event/object_tampered', AnswerWithHeader, eventCallback)
+    sub = rospy.Subscriber('/motion_analysis/event/object_tampered', AnswerWithHeader, eventCallback)
     ost_pub = rospy.Publisher('/motion_analysis/object_state', Int32, queue_size=1)
-    init()
+    image_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, imageCallback)
 
     while not rospy.is_shutdown():
         rospy.spin()

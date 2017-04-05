@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <launch>
-    <master auto="start"/>
 
     <node pkg="radio_adls_demo" type="walking_event.py" respawn="false" name="radio_adls_demo" output="screen">
     </node>
 
     <node pkg="image_view" type="image_view" respawn="false" name="image_view" output="log">
         <remap from="image"  to="/camera/rgb/image_raw"/>
-        <param name="window_name" value="Pill intake"/>
+        <param name="window_name" value="4 meters walking"/>
         <param name="autosize" value="true"/>
     </node>
 
@@ -27,4 +26,6 @@
         <rosparam file="$(find laser_analysis)/config/parameters.yaml" command="load" />
     </node>
 
-    </launch>
+    <node pkg="rosbag" type="play" name="rosbag" args="-s 45 -q /home/osboxes/ss1_lsA_sc1B_ru15_cg_v.bag" required = "true"/>
+
+</launch>

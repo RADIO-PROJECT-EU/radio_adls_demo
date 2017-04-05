@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <launch>
-    <master auto="start"/>
 
     <node pkg="radio_adls_demo" type="bed_event.py" respawn="false" name="radio_adls_demo" output="screen">
         <!--<rosparam file="$(find radio_adls_demo)/config/parameters.yaml" command="load" />-->
     </node>
 
-    <node pkg="image_view" type="image_view" respawn="false" name="image_view" output="screen">
+    <node pkg="image_view" type="image_view" respawn="false" name="image_view" output="log">
         <remap from="image"  to="/camera/rgb/image_raw"/>
         <param name="window_name" value="Bed event"/>
         <param name="autosize" value="true"/>
     </node>
+
+    <node pkg="motion_analysis" type="motion_analysis" respawn="false" name="motion_analysis" output="log">
+        <rosparam file="$(find motion_analysis)/config/parameters.yaml" command="load" />
+        <rosparam file="$(find motion_analysis)/config/conf.yaml" command="load" />
+
+    </node>
+
+    <node pkg="rosbag" type="play" name="rosbag" args="-s 50 -u 20 -q /home/osboxes/ss1_lsA_sc4_ru02_cg14_v.bag" required = "true"/>
     </launch>

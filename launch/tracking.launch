@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <launch>
-    <master auto="start"/>
 
     <node pkg="radio_adls_demo" type="chair_event.py" respawn="false" name="radio_adls_demo" output="screen">
         <param name="classifier" value="false" />
@@ -14,7 +13,7 @@
     <arg name="use_depth"       default="false"                  />
     <arg name="fps"             default="30"                     />
     
-    <node pkg="chroma" type="chroma" name="chroma" output="screen">
+    <node pkg="chroma" type="chroma" name="chroma" output="log">
         <rosparam file="$(find chroma)/config/parameters.yaml" command="load" />
         <param name="project_path"    value="$(find ros_visual)"/>
         <param name="playback_topics" value="$(arg compressed)" />
@@ -23,7 +22,7 @@
     </node>
     
     <group if="$(arg use_depth)">
-        <node pkg="depth" type="depth" name="depth" output="screen" >
+        <node pkg="depth" type="depth" name="depth" output="log" >
             <rosparam file="$(find depth)/config/parameters.yaml" command="load" />
             <param name="project_path"    value="$(find ros_visual)"      />
             <param name="playback_topics" value="$(arg compressed)"       />
@@ -32,7 +31,7 @@
         </node> 
     </group>
 
-    <node pkg="fusion" type="fusion" name="fusion" output="screen">
+    <node pkg="fusion" type="fusion" name="fusion" output="log">
         <rosparam file="$(find fusion)/config/parameters.yaml" command="load" />
         <param name="playback_topics" value="$(arg compressed)"  />
         <param name="project_path"    value="$(find ros_visual)" />
@@ -42,9 +41,5 @@
         <param name="fps"             value="$(arg fps)"     />
     </node>
 
-    <node pkg="classifier" type="classifier.py" name="classifier" output="screen">
-        <rosparam file="$(find classifier)/config/parameters.yaml" command="load" />
-        <param name="classifier_path" value="$(find classifier)"                  />
-        <param name="fps"             value="$(arg fps)"     />
-    </node>
+    <node pkg="rosbag" type="play" name="rosbag" args="-u 54 -q /home/osboxes/ss1_lsA_sc1B_ru15_cg_v.bag" required = "true"/>
     </launch>

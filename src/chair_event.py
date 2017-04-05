@@ -27,7 +27,7 @@ def eventCallback(msg):
         stood_up = True
         dt = datetime.now()
         end_time = dt.minute*60000000 + dt.second*1000000 + dt.microsecond
-        print '\033[94m Sit to stand duration: ' + str((end_time-start_time)/1000000.0) + ' seconds.\033[0m'
+        print '\033[92m Sit to stand duration: ' + str((end_time-start_time)/1000000.0) + ' seconds.\033[0m'
         #timestamp = datetime.today().strftime("%d-%m-%Y")+" "+dt.strftime("%H:%M:%S")
         command = "curl -silent -i -XPOST 'http://localhost:8086/write?db=radiodb' --data-binary 'adl_table,event_type='Sitting-Standing' duration="+str((end_time-start_time)/1000000.0)+"'"
         command = shlex.split(command)
@@ -61,17 +61,6 @@ def imageCallback(image):
     cv2.waitKey(3)
 
 
-def init():
-    global start_time
-
-    command = "rosbag play -q /home/"+getpass.getuser()+"/ss1_lsA_sc1B_ru15_cg_v.bag"
-    command = shlex.split(command)
-    subprocess.Popen(command, stdout=subprocess.PIPE)
-
-    dt = datetime.now()
-    start_time = dt.minute*60000000 + dt.second*1000000 + dt.microsecond
-
-
 if __name__ == '__main__':
     rospy.init_node('radio_chair_demo')
     rospy.Subscriber('/fusion/results', FusionMsg, rectangleCallback)
@@ -80,7 +69,6 @@ if __name__ == '__main__':
     rospy.Subscriber('/camera/rgb/image_raw', Image, imageCallback)
     if classifier:
         rospy.Subscriber('/classifier/result', String, eventCallback)
-    init()
 
     while not rospy.is_shutdown():
         rospy.spin()
