@@ -32,17 +32,17 @@ if __name__ == '__main__':
                 # run pyAudioAnalysis here
                 command = "play /home/osboxes/python_libraries/pyAudioAnalysis/ss1_lsA_sc2_ruekot_cgedia_v.wav"
                 command = shlex.split(command)
-                subprocess.Popen(command, stdout=subprocess.PIPE)
+                subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 sleep(26)
                 command = "python /home/osboxes/python_libraries/pyAudioAnalysis/audioAnalysis.py segmentClassifyFile -i /home/osboxes/python_libraries/pyAudioAnalysis/ss1_lsA_sc2_ruekot_cgedia_v.wav --model svm_rbf --modelName /home/osboxes/python_libraries/pyAudioAnalysis/svmRBFRadio4Classes"
                 command = shlex.split(command)
-                subprocess.Popen(command, stdout=subprocess.PIPE)
+                subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 print '\033[94m Do you want to play the sound file again? (y/n) \033[0m'
                 ans = raw_input()
                 if ans == 'y':
                     command = "play /home/osboxes/python_libraries/pyAudioAnalysis/ss1_lsA_sc2_ruekot_cgedia_v.wav"
                     command = shlex.split(command)
-                    subprocess.Popen(command, stdout=subprocess.PIPE)
+                    subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     sleep(22)
                 mode = 1
             elif mode == 1:
