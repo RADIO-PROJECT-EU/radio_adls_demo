@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 import rospy
-import getpass
-from time import sleep
 import subprocess, shlex
 from datetime import datetime
 from sensor_msgs.msg import Image

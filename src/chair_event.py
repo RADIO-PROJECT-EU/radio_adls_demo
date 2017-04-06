@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 import cv2
 import rospy
-import getpass
-from time import sleep
 import subprocess, shlex
 from datetime import datetime
 from std_msgs.msg import String

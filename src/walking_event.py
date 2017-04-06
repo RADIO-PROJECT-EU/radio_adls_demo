@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 import rospy
-import getpass
-from time import sleep
 import subprocess, shlex
 from laser_analysis.msg import Analysis4MetersMsg
 
